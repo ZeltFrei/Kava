@@ -1,4 +1,4 @@
-FROM python:3.12.2-slim-bookworm
+FROM python:3.12.3-slim-bookworm
 
 ARG S6_OVERLAY_VERSION=3.1.6.2 LAVALINK_VERSION=4.0.4 DEBIAN_FRONTEND="noninteractive"
 
@@ -9,7 +9,7 @@ ADD https://github.com/just-containers/s6-overlay/releases/download/v${S6_OVERLA
 
 RUN apt-get update && \
   apt-get install -y git curl jq openjdk-17-jre-headless xz-utils \
-  gcc g++ python3-dev libffi-dev build-essential && \
+  gcc g++ python3-dev libffi-dev build-essential cmake libjpeg-dev && \
   apt-get clean && \
   tar -C / -Jxpf /tmp/s6-overlay-noarch.tar.xz && \
   tar -C / -Jxpf /tmp/s6-overlay-x86_64.tar.xz && \

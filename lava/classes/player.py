@@ -4,10 +4,8 @@ from typing import TYPE_CHECKING, Optional, Union
 
 from disnake import Message, Locale, ButtonStyle, Embed, Colour, Guild, Interaction
 from disnake.ui import ActionRow, Button
-from lavalink import DefaultPlayer, Node, parse_time, TrackEndEvent, RequestError, PlayerErrorEvent, TrackStuckEvent, \
-    QueueEndEvent, TrackLoadFailedEvent
+from lavalink import DefaultPlayer, Node, parse_time
 
-from lava.embeds import ErrorEmbed
 from lava.utils import get_recommended_tracks, get_image_size
 
 if TYPE_CHECKING:
@@ -379,47 +377,3 @@ class LavaPlayer(DefaultPlayer):
 
         _ = self.bot.loop.create_task(self.check_autoplay())
         _ = self.bot.loop.create_task(self.update_display())
-
-    async def _handle_event(self, event):
-        if isinstance(event, TrackStuckEvent) or isinstance(event, TrackEndEvent) and event.reason.may_start_next():
-            await self._handle_track_event()
-        elif isinstance(event, TrackEndEvent):
-            await self._handle_track_end_event()
-        elif isinstance(event, QueueEndEvent):
-            await self._handle_queue_end_event()
-        elif isinstance(event, TrackLoadFailedEvent):
-            await self._handle_track_load_failed_event(event)
-
-    async def _handle_track_event(self):
-        try:
-            await self.play()
-        except RequestError as error:
-            await self.client._dispatch_event(PlayerErrorEvent(self, error))  # skipcq: PYL-W0212
-            self.bot.logger.exception(
-                '[DefaultPlayer:%d] Encountered a request error whilst starting a new track.', self.guild_id
-            )
-
-    async def _handle_track_end_event(self):
-        self.bot.logger.info("Received track end event for guild %s", self.bot.get_guild(self.guild_id))
-        try:
-            await self.update_display()
-        except ValueError:
-            pass
-
-    async def _handle_queue_end_event(self):
-        self.bot.logger.info("Received queue end event for guild %s", self.bot.get_guild(self.guild_id))
-        try:
-            await self.update_display()
-        except ValueError:
-            pass
-
-    async def _handle_track_load_failed_event(self, event):
-        self.bot.logger.info("Received track load failed event for guild %s", self.bot.get_guild(self.guild_id))
-        message = await self.message.channel.send(
-            embed=ErrorEmbed(
-                f"{self.bot.get_text('error.play_failed', self.locale, '無法播放歌曲')}: {event.track['title']}",
-                f"{self.bot.get_text('reason', self.locale, '原因')}: `{event.original or 'Unknown'}`"
-            )
-        )
-        await self.skip()
-        await self.update_display(message, delay=5)

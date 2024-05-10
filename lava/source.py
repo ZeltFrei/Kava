@@ -163,7 +163,8 @@ class SpotifySource(BaseSource):
                             'isStream': False,
                             'title': track['track']['name'],
                             'uri': f"https://open.spotify.com/track/{track['track']['id']}",
-                            'artworkUrl': track['track']['images'][0]['url']
+                            'artworkUrl': track['track']['album']['images'][0]['url']
+                            if track['track']['album'].get('images') else None
                         },
                         requester=0
                     )
@@ -201,7 +202,7 @@ class SpotifySource(BaseSource):
                             'isStream': False,
                             'title': track['name'],
                             'uri': f"https://open.spotify.com/track/{track['id']}",
-                            'artworkUrl': album['images'][0]['url']
+                            'artworkUrl': album['images'][0]['url'] if album.get('images') else None
                         },
                         requester=0
                     )
@@ -336,6 +337,8 @@ class BilibiliSource(BaseSource):
             audio_url = json_data['data']['dash']['audio'][0]['baseUrl']
             if audio_url.startswith("https://upos-hz-mirrorakam.akamaized.net/"):
                 return audio_url
+
+        return None
 
     def get_audio(self, url: str) -> Tuple[str, str, str]:
         """

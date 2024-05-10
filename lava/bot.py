@@ -1,11 +1,13 @@
 import json
 from logging import Logger
+from os import getenv
 from typing import Optional
 
 from disnake import Locale
 from disnake.ext.commands import Bot as OriginalBot
 
 from lava.classes.lavalink_client import LavalinkClient
+from lava.krabbe.krabbe import Krabbe
 from lava.source import SourceManager
 
 
@@ -20,10 +22,14 @@ class Bot(OriginalBot):
         with open("configs/icons.json", "r", encoding="utf-8") as f:
             self.icons = json.load(f)
 
+        self.krabbe = Krabbe(self)
+
     async def on_ready(self):
         self.logger.info("The bot is ready! Logged in as %s" % self.user)
 
         self.__setup_lavalink_client()
+
+        await self.krabbe.connect(getenv("KRABBE_URI"))
 
     @property
     def lavalink(self) -> LavalinkClient:

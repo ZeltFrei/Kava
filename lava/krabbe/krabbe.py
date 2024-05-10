@@ -1,3 +1,4 @@
+import json
 from typing import Optional, TYPE_CHECKING
 
 from websockets import WebSocketClientProtocol, connect, Data, ConnectionClosed
@@ -12,7 +13,12 @@ class Krabbe:
         self.websocket: Optional[WebSocketClientProtocol] = None
 
     async def on_websocket_message(self, message: Data):
-        pass
+        data = json.load(message)
+
+        match data["type"]:
+            # TODO: Implement the rest of the message types
+            case _:
+                self.manager.logger.warning("Unknown message type %s", data["type"])
 
     async def message_handler(self):
         try:

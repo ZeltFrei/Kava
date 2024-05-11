@@ -1,8 +1,7 @@
 import json
 import uuid
 from asyncio import Future
-from logging import getLogger
-from typing import Optional, Dict, Callable, Any, Coroutine, TYPE_CHECKING, List
+from typing import Optional, Dict, Callable, Any, Coroutine, TYPE_CHECKING, List, Union
 
 import websockets
 from websockets import WebSocketClientProtocol
@@ -28,30 +27,38 @@ class Request:
 
 
 class KavaClient:
-    logger = getLogger("kava.client")
-
     def __init__(self, bot: "Bot", uri: str):
         self.bot: "Bot" = bot
         self.uri = uri
         self.websocket: Optional[WebSocketClientProtocol] = None
         self.pending_requests: Dict[str, Future] = {}
-        self.handlers: Dict[str, List[Callable[[Request, Any], Coroutine[Any, Any, None]]]] = {}
+        self.handlers: Dict[str, List[Callable[["KavaClient", Request, Any], Coroutine[Any, Any, None]]]] = {}
 
-    async def _handle_messages(self) -> None:
-        async for message in self.websocket:
-            data = json.loads(message)
+    async def _handle_connection(self) -> None:
+        self.bot.logger.info("Connection to Kava server established.")
 
-            if data['type'] == "request":
-                _ = data.bot.loop.create_task(self._handle_request(data))
-            elif data['type'] == "response":
-                request_id = message.get('id')
+        try:
+            async for message in self.websocket:
+                _ = self.bot.loop.create_task(self._handle_message(message))
+        except websockets.ConnectionClosed:
+            await self.close()
+            # TODO: try reconnecting.
+            # TODO: Don't do it here, try modifying the connect function to auto retry connecting and calls it here.
 
-                if request_id in self.pending_requests:
-                    self.pending_requests[request_id].set_result(data['data'])
-                    del self.pending_requests[request_id]
+    async def _handle_message(self, message: Union[str, bytes]) -> None:
+        data = json.loads(message)
+
+        if data['type'] == "request":
+            _ = self.bot.loop.create_task(self._handle_request(data))
+        elif data['type'] == "response":
+            request_id = message.get('id')
+
+            if request_id in self.pending_requests:
+                self.pending_requests[request_id].set_result(data['data'])
+                del self.pending_requests[request_id]
 
     async def _handle_request(self, request: Dict[str, Any]) -> None:
-        self.logger.debug(f"Handling request {request}")
+        self.bot.logger.debug(f"Handling request {request}")
 
         request_id = request['id']
         endpoint = request['endpoint']
@@ -61,7 +68,7 @@ class KavaClient:
 
         if endpoint in self.handlers:
             for handler in self.handlers[endpoint]:
-                _ = self.bot.loop.create_task(handler(request_obj, **data))
+                _ = self.bot.loop.create_task(handler(self, request_obj, **data))
         else:
             await request_obj.respond({"status": "error", "message": "No handler for endpoint"})
 
@@ -82,14 +89,15 @@ class KavaClient:
 
         return await future
 
-    def add_handler(self, endpoint: str, handler: Callable[[Request, Any], Coroutine[Any, Any, None]]) -> None:
+    def add_handler(self, endpoint: str,
+                    handler: Callable[["KavaClient", Request, Any], Coroutine[Any, Any, None]]) -> None:
         """
         Add a handler for a specific endpoint.
         :param endpoint: The endpoint to add the handler for.
         :param handler: The handler to add.
         :return: None
         """
-        self.logger.debug(f"Adding handler for endpoint {endpoint}")
+        self.bot.logger.debug(f"Adding handler for endpoint {endpoint}")
 
         if endpoint not in self.handlers:
             self.handlers[endpoint] = []
@@ -97,14 +105,14 @@ class KavaClient:
         self.handlers[endpoint].append(handler)
 
     async def connect(self) -> None:
-        self.logger.info("Connecting to Kava server...")
+        self.bot.logger.info("Connecting to Kava server...")
 
         if not self.websocket or self.websocket.closed:
             self.websocket = await websockets.connect(self.uri)
-            _ = self.bot.loop.create_task(self._handle_messages())
+            _ = self.bot.loop.create_task(self._handle_connection())
 
     async def close(self) -> None:
-        self.logger.info("Closing Kava client...")
+        self.bot.logger.info("Closing Kava client...")
 
         if self.websocket:
             await self.websocket.close()

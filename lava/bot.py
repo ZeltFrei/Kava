@@ -8,6 +8,7 @@ from disnake.ext.commands import Bot as OriginalBot
 
 from lava.classes.lavalink_client import LavalinkClient
 from lava.krabbe.client import KavaClient
+from lava.krabbe.handlers import add_handlers
 from lava.source import SourceManager
 
 
@@ -70,6 +71,8 @@ class Bot(OriginalBot):
         :return: None
         """
         await self.kava_client.connect()  # TODO: Add necessary handlers
+
+        add_handlers(self.kava_client)
 
     def get_text(self, key: str, locale: Locale, default: str = None) -> str:
         """

@@ -22,12 +22,14 @@ class Bot(OriginalBot):
         with open("configs/icons.json", "r", encoding="utf-8") as f:
             self.icons = json.load(f)
 
-        self.kava_client = KavaClient(self, getenv("KAVA_URI"))
+        self.kava_client = KavaClient(self, getenv("KRABBE_URI"))
 
     async def on_ready(self):
         self.logger.info("The bot is ready! Logged in as %s" % self.user)
 
         self.__setup_lavalink_client()
+
+        await self.__setup_kava_client()
 
     @property
     def lavalink(self) -> LavalinkClient:

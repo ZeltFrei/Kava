@@ -136,7 +136,7 @@ class Events(Cog):
 
         if not await can_use_music(self.bot.kava_client, interaction.author.id, interaction.author.voice.channel.id):
             await interaction.response.send_message(
-                embed=ErrorEmbed("你沒有權限在這個頻道使用音樂！"),
+                embed=ErrorEmbed("此語音頻道擁有者不允許其他成員使用音樂功能"),
                 ephemeral=True
             )
             return

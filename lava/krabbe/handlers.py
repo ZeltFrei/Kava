@@ -42,6 +42,9 @@ async def connect(client: "KavaClient", request: "Request", owner_id: int, chann
         )
     )
 
+    player = client.bot.lavalink.player_manager.get(channel.guild.id)
+    player.enter_disconnect_timeout()
+
     await request.respond(
         {
             "status": "success",

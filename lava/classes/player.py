@@ -181,11 +181,11 @@ class LavaPlayer(DefaultPlayer):
 
         if interaction:
             await interaction.response.edit_message(
-                embed=await self.__generate_display_embed(), components=components
+                content=None, embed=await self.__generate_display_embed(), components=components
             )
 
         else:
-            await self.message.edit(embed=(await self.__generate_display_embed()), components=components)
+            await self.message.edit(content=None, embed=(await self.__generate_display_embed()), components=components)
 
         self.bot.logger.debug(
             "Updating player in guild %s display message to %s", self.bot.get_guild(self.guild_id), self.message.id

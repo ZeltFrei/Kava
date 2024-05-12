@@ -1,11 +1,14 @@
 import json
 from logging import Logger
+from os import getenv
 from typing import Optional
 
 from disnake import Locale
 from disnake.ext.commands import Bot as OriginalBot
 
 from lava.classes.lavalink_client import LavalinkClient
+from lava.krabbe.client import KavaClient
+from lava.krabbe.handlers import add_handlers
 from lava.source import SourceManager
 
 
@@ -20,10 +23,14 @@ class Bot(OriginalBot):
         with open("configs/icons.json", "r", encoding="utf-8") as f:
             self.icons = json.load(f)
 
+        self.kava_client = KavaClient(self, getenv("KRABBE_URI"))
+
     async def on_ready(self):
         self.logger.info("The bot is ready! Logged in as %s" % self.user)
 
         self.__setup_lavalink_client()
+
+        await self.__setup_kava_client()
 
     @property
     def lavalink(self) -> LavalinkClient:
@@ -57,6 +64,15 @@ class Bot(OriginalBot):
         self.logger.info("Done loading lavalink nodes!")
 
         self.lavalink.register_source(SourceManager())
+
+    async def __setup_kava_client(self) -> None:
+        """
+        Set up the Kava server for the bot.
+        :return: None
+        """
+        await self.kava_client.connect()  # TODO: Add necessary handlers
+
+        add_handlers(self.kava_client)
 
     def get_text(self, key: str, locale: Locale, default: str = None) -> str:
         """

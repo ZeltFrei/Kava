@@ -22,7 +22,7 @@
 <h3 align="center">Lava</h3>
 
   <p align="center">
-    由 Lavalink 驅動且擁有眾多功能且完全開源、免費的音樂機器人
+    A fork of [Lava](https://github.com/Nat1anWasTaken/Lava) in order to integrate with Krabbe Rewrite
     <br />
     <a href="#關於專案"><strong>閱讀更多 »</strong></a>
     <br />

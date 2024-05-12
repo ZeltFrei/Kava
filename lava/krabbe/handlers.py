@@ -305,6 +305,7 @@ async def pause(client: "KavaClient", request: "Request", channel_id: int):
         return
 
     await player.set_pause(True)
+    player.enter_disconnect_timeout()
 
     await request.respond(
         {

@@ -39,7 +39,7 @@ async def connect(client: "KavaClient", request: "Request", channel_id: int):
         {
             "status": "success",
             "channel_id": channel.id,
-            "message": "成功連接至語音頻道。"
+            "message": f"Krabbe 2.0 已為您的語音頻道分配音樂機器人，請查看您的語音文字頻道 {channel.name}。"
         }
     )
 

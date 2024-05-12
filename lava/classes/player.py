@@ -7,7 +7,7 @@ from disnake import Message, Locale, ButtonStyle, Embed, Colour, Guild, Interact
 from disnake.ui import ActionRow, Button
 from lavalink import DefaultPlayer, Node, parse_time
 
-from lava.embeds import InfoEmbed
+from lava.embeds import WarningEmbed
 from lava.utils import get_recommended_tracks, get_image_size
 
 if TYPE_CHECKING:
@@ -364,14 +364,14 @@ class LavaPlayer(DefaultPlayer):
 
         if self.message:
             await self.message.channel.send(
-                embed=InfoEmbed(
-                    title=f"音樂機器人 {self.bot.user.name} 已經等候您超過三分鐘了，如果接下來30秒內沒有進行任何音樂操作，將自動退出。"
+                embed=WarningEmbed(
+                    title=f"音樂機器人 {self.bot.user.name} 已經等候您超過三分鐘了，如果接下來 30 秒內沒有進行任何音樂操作，將自動退出。"
                 )
             )
         else:
             await self.bot.get_channel(self.channel_id).send(
-                embed=InfoEmbed(
-                    title=f"音樂機器人 {self.bot.user.name} 已經等候您超過三分鐘了，如果接下來30秒內沒有進行任何音樂操作，將自動退出。"
+                embed=WarningEmbed(
+                    title=f"音樂機器人 {self.bot.user.name} 已經等候您超過三分鐘了，如果接下來 30 秒內沒有進行任何音樂操作，將自動退出。"
                 )
             )
 

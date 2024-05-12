@@ -1,5 +1,4 @@
-ARG PYTHON_VERSION=3.10.9
-FROM python:${PYTHON_VERSION}-slim as base
+FROM python:3.10.9-slim as base
 
 ENV PYTHONDONTWRITEBYTECODE=1
 
@@ -23,10 +22,10 @@ RUN --mount=type=cache,target=/root/.cache/pip \
     --mount=type=bind,source=requirements.txt,target=requirements.txt \
     python -m pip install -r requirements.txt
 
+COPY . .
+
 RUN chown -R appuser:appuser /app
 
 USER appuser
-
-COPY . .
 
 CMD python main.py

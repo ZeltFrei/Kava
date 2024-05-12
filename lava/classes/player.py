@@ -363,7 +363,7 @@ class LavaPlayer(DefaultPlayer):
             pass
 
         if self.message:
-            await self.message.channel.send(
+            await self.bot.get_channel(self.channel_id).send(
                 embed=InfoEmbed(
                     title=f"音樂機器人 {self.bot.user.name} 已經等候您超過三分鐘了，如果接下來30秒內沒有進行任何音樂操作，將自動退出。"
                 )

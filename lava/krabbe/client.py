@@ -51,7 +51,7 @@ class KavaClient:
         if data['type'] == "request":
             _ = self.bot.loop.create_task(self._handle_request(data))
         elif data['type'] == "response":
-            request_id = message.get('id')
+            request_id = data.get('id')
 
             if request_id in self.pending_requests:
                 self.pending_requests[request_id].set_result(data['data'])

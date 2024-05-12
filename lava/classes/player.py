@@ -1,4 +1,5 @@
 import asyncio
+from asyncio import Task
 from time import time
 from typing import TYPE_CHECKING, Optional, Union
 
@@ -6,6 +7,7 @@ from disnake import Message, Locale, ButtonStyle, Embed, Colour, Guild, Interact
 from disnake.ui import ActionRow, Button
 from lavalink import DefaultPlayer, Node, parse_time
 
+from lava.embeds import ErrorEmbed
 from lava.utils import get_recommended_tracks, get_image_size
 
 if TYPE_CHECKING:
@@ -30,6 +32,8 @@ class LavaPlayer(DefaultPlayer):
 
         self.__display_image_as_wide: Optional[bool] = None
         self.__last_image_url: str = ""
+
+        self.timeout_task: Optional[Task] = None
 
     @property
     def guild(self) -> Optional[Guild]:
@@ -340,6 +344,31 @@ class LavaPlayer(DefaultPlayer):
                f"{self.bot.get_icon('progress.mid_point', 'MP|') if percentage != 1 else self.bot.get_icon('progress.start_fill', 'SF|')}" \
                f"{self.bot.get_icon('progress.end_fill', 'EF|') * round((1 - percentage) * 10)}" \
                f"{self.bot.get_icon('progress.end', 'ED|') if percentage != 1 else self.bot.get_icon('progress.end_point', 'EP')}"
+
+    def cleanup(self):
+        if self.timeout_task:
+            self.timeout_task.cancel()
+
+    def enter_disconnect_timeout(self):
+        """
+        Disconnect the player if it has been inactive for 5 minutes.
+        """
+        self.timeout_task = self.bot.loop.create_task(self.__disconnect_timeout())
+
+    async def __disconnect_timeout(self):
+        try:
+            _ = await self.bot.wait_for("play_or_resume", check=lambda p: p == self, timeout=180)
+        except asyncio.TimeoutError:
+            await self.guild.voice_client.disconnect(force=False)
+
+        if self.message:
+            await self.message.channel.send(
+                embed=ErrorEmbed(
+                    self.bot.get_text("timeout.disconnect", self.locale, "因為閒置超過 3 分鐘，已自動斷線")
+                )
+            )
+
+        return
 
     async def is_current_artwork_wide(self) -> bool:
         """

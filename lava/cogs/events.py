@@ -44,8 +44,7 @@ class Events(Cog):
 
         self.bot.logger.info("Received queue end event for guild %s", player.guild)
 
-        if player.guild.voice_client:
-            await player.guild.voice_client.disconnect(force=False)
+        player.enter_disconnect_timeout()
 
         try:
             await player.update_display()
@@ -141,7 +140,10 @@ class Events(Cog):
             )
             return
 
-        player = self.bot.lavalink.player_manager.get(interaction.guild_id)
+            match interaction.data.custom_id:
+                case "control.resume":
+                    await player.set_pause(False)
+                    self.bot.dispatch("play_or_resume", player=player)
 
         match interaction.data.custom_id:
             case "control.resume":

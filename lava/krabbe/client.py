@@ -32,7 +32,7 @@ class KavaClient:
         self.uri = uri
         self.websocket: Optional[WebSocketClientProtocol] = None
         self.pending_requests: Dict[str, Future] = {}
-        self.handlers: Dict[str, List[Callable[["KavaClient", Request, Any], Coroutine[Any, Any, None]]]] = {}
+        self.handlers: Dict[str, List[Callable[..., Coroutine[Any, Any, None]]]] = {}
 
     async def _handle_connection(self) -> None:
         self.bot.logger.info("Connection to Kava server established.")
@@ -90,7 +90,7 @@ class KavaClient:
         return await future
 
     def add_handler(self, endpoint: str,
-                    handler: Callable[["KavaClient", Request, Any], Coroutine[Any, Any, None]]) -> None:
+                    handler: Callable[..., Coroutine[Any, Any, None]]) -> None:
         """
         Add a handler for a specific endpoint.
         :param endpoint: The endpoint to add the handler for.

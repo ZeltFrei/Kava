@@ -5,6 +5,7 @@ from lavalink import LoadResult, LoadType
 
 from lava.classes.player import LavaPlayer
 from lava.classes.voice_client import LavalinkVoiceClient
+from lava.embeds import InfoEmbed
 from lava.krabbe.utils import ensure_channel
 
 if TYPE_CHECKING:
@@ -17,7 +18,7 @@ async def get_client_info(client: "KavaClient", request: "Request"):
     )
 
 
-async def connect(client: "KavaClient", request: "Request", channel_id: int):
+async def connect(client: "KavaClient", request: "Request", owner_id: int, channel_id: int):
     if not (channel := await ensure_channel(request, channel_id)):
         return
 
@@ -33,7 +34,13 @@ async def connect(client: "KavaClient", request: "Request", channel_id: int):
     # noinspection PyTypeChecker
     await channel.connect(timeout=60.0, reconnect=True, cls=LavalinkVoiceClient)
 
-    # TODO: Send a instruction message to user about how to use the bot.
+    await channel.send(
+        content=f"<@{owner_id}>",
+        embed=InfoEmbed(
+            title="召喚成功",
+            description=f"{client.bot.user.mention} 是我們為您分配的音樂機器人，請使用 斜線命令 `/` 來播放音樂。 "
+        )
+    )
 
     await request.respond(
         {

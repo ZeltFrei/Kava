@@ -7,7 +7,7 @@ from disnake import Message, Locale, ButtonStyle, Embed, Colour, Guild, Interact
 from disnake.ui import ActionRow, Button
 from lavalink import DefaultPlayer, Node, parse_time
 
-from lava.embeds import ErrorEmbed
+from lava.embeds import InfoEmbed
 from lava.utils import get_recommended_tracks, get_image_size
 
 if TYPE_CHECKING:
@@ -363,8 +363,8 @@ class LavaPlayer(DefaultPlayer):
 
         if self.message:
             await self.message.channel.send(
-                embed=ErrorEmbed(
-                    self.bot.get_text("timeout.disconnect", self.locale, "因為閒置超過 3 分鐘，已自動斷線")
+                embed=InfoEmbed(
+                    title=f"音樂機器人 {self.bot.user.name} 已經等候您超過三分鐘了，因此已自動離開語音頻道"
                 )
             )
 

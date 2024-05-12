@@ -10,6 +10,7 @@ from lava.bot import Bot
 from lava.classes.player import LavaPlayer
 from lava.embeds import ErrorEmbed
 from lava.errors import MissingVoicePermissions, BotNotInVoice, UserNotInVoice, UserInDifferentChannel
+from lava.krabbe.utils import can_use_music
 from lava.utils import ensure_voice
 
 
@@ -121,53 +122,61 @@ class Events(Cog):
 
     @commands.Cog.listener(name="on_message_interaction")
     async def on_message_interaction(self, interaction: MessageInteraction):
-        if interaction.data.custom_id.startswith("control"):
-            if interaction.data.custom_id.startswith("control.empty"):
-                await interaction.response.edit_message()
+        if not interaction.data.custom_id.startswith("control"):
+            return
 
-                return
+        if interaction.data.custom_id.startswith("control.empty"):
+            await interaction.response.edit_message()
+            return
 
-            try:
-                await ensure_voice(interaction, should_connect=False)
-            except (UserNotInVoice, BotNotInVoice, MissingVoicePermissions, UserInDifferentChannel):
-                return
+        try:
+            await ensure_voice(interaction, should_connect=False)
+        except (UserNotInVoice, BotNotInVoice, MissingVoicePermissions, UserInDifferentChannel):
+            return
 
-            player = self.bot.lavalink.player_manager.get(interaction.guild_id)
+        if not await can_use_music(self.bot.kava_client, interaction.author.id, interaction.author.voice.channel.id):
+            await interaction.response.send_message(
+                embed=ErrorEmbed("你沒有權限在這個頻道使用音樂！"),
+                ephemeral=True
+            )
+            return
 
-            match interaction.data.custom_id:
-                case "control.resume":
-                    await player.set_pause(False)
+        player = self.bot.lavalink.player_manager.get(interaction.guild_id)
 
-                case "control.pause":
-                    await player.set_pause(True)
+        match interaction.data.custom_id:
+            case "control.resume":
+                await player.set_pause(False)
 
-                case "control.stop":
-                    await player.stop()
-                    player.queue.clear()
-                    await interaction.guild.voice_client.disconnect(force=False)
+            case "control.pause":
+                await player.set_pause(True)
 
-                case "control.previous":
-                    await player.seek(0)
+            case "control.stop":
+                await player.stop()
+                player.queue.clear()
+                await interaction.guild.voice_client.disconnect(force=False)
 
-                case "control.next":
-                    await player.skip()
+            case "control.previous":
+                await player.seek(0)
 
-                case "control.shuffle":
-                    player.set_shuffle(not player.shuffle)
+            case "control.next":
+                await player.skip()
 
-                case "control.repeat":
-                    player.set_loop(player.loop + 1 if player.loop < 2 else 0)
+            case "control.shuffle":
+                player.set_shuffle(not player.shuffle)
 
-                case "control.rewind":
-                    await player.seek(round(player.position) - 10000)
+            case "control.repeat":
+                player.set_loop(player.loop + 1 if player.loop < 2 else 0)
 
-                case "control.forward":
-                    await player.seek(round(player.position) + 10000)
+            case "control.rewind":
+                await player.seek(round(player.position) - 10000)
 
-                case "control.autoplay":
-                    await player.toggle_autoplay()
+            case "control.forward":
+                await player.seek(round(player.position) + 10000)
 
-            await player.update_display(interaction=interaction)
+            case "control.autoplay":
+                await player.toggle_autoplay()
+
+        await player.update_display(interaction=interaction)
 
 
 def setup(bot):

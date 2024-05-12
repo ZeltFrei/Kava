@@ -140,14 +140,12 @@ class Events(Cog):
             )
             return
 
-            match interaction.data.custom_id:
-                case "control.resume":
-                    await player.set_pause(False)
-                    self.bot.dispatch("play_or_resume", player=player)
+        player = self.bot.lavalink.player_manager.get(interaction.guild_id)
 
         match interaction.data.custom_id:
             case "control.resume":
                 await player.set_pause(False)
+                self.bot.dispatch("play_or_resume", player=player)
 
             case "control.pause":
                 await player.set_pause(True)

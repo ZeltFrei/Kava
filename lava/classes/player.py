@@ -358,15 +358,22 @@ class LavaPlayer(DefaultPlayer):
     async def __disconnect_timeout(self):
         try:
             _ = await self.bot.wait_for("play_or_resume", check=lambda p: p == self, timeout=180)
+            return
         except asyncio.TimeoutError:
-            await self.guild.voice_client.disconnect(force=False)
+            pass
 
         if self.message:
             await self.message.channel.send(
                 embed=InfoEmbed(
-                    title=f"音樂機器人 {self.bot.user.name} 已經等候您超過三分鐘了，因此已自動離開語音頻道"
+                    title=f"音樂機器人 {self.bot.user.name} 已經等候您超過三分鐘了，如果接下來30秒內沒有進行任何音樂操作，將自動退出。"
                 )
             )
+
+        try:
+            _ = await self.bot.wait_for("play_or_resume", check=lambda p: p == self, timeout=30)
+            return
+        except asyncio.TimeoutError:
+            await self.guild.voice_client.disconnect(force=False)
 
         return
 

@@ -38,17 +38,17 @@ class Commands(Cog):
         self.bot = bot
 
     @commands.slash_command(
-        name=Localized("info", key="command.info.name"),
-        description=Localized("顯示機器人資訊", key="command.info.description")
+        name="info",
+        description="顯示機器人資訊"
     )
     async def info(self, interaction: ApplicationCommandInteraction):
         embed = Embed(
-            title=self.bot.get_text('command.info.embed.title', interaction.locale, '機器人資訊'),
+            title='機器人資訊',
             color=0x2b2d31
         )
 
         embed.add_field(
-            name=self.bot.get_text('command.info.embed.start_time', interaction.locale, '啟動時間'),
+            name='啟動時間',
             value=f"<t:{round(Process(getpid()).create_time())}:F>",
             inline=True
         )
@@ -57,20 +57,20 @@ class Commands(Cog):
         upstream_url = get_upstream_url(branch)
 
         embed.add_field(
-            name=self.bot.get_text('command.info.embed.commit_hash', interaction.locale, '版本資訊'),
+            name='版本資訊',
             value=f"{get_commit_hash()} on {branch} from {upstream_url}",
         )
 
         embed.add_field(name="​", value="​", inline=True)
 
         embed.add_field(
-            name=self.bot.get_text('command.info.embed.cpu', interaction.locale, 'CPU'),
+            name='CPU',
             value=f"{cpu_percent()}%",
             inline=True
         )
 
         embed.add_field(
-            name=self.bot.get_text('command.info.embed.ram', interaction.locale, 'RAM'),
+            name='RAM',
             value=f"{round(bytes_to_gb(virtual_memory()[3]), 1)} GB / "
                   f"{round(bytes_to_gb(virtual_memory()[0]), 1)} GB "
                   f"({virtual_memory()[2]}%)",
@@ -80,13 +80,13 @@ class Commands(Cog):
         embed.add_field(name="​", value="​", inline=True)
 
         embed.add_field(
-            name=self.bot.get_text('command.info.embed.guilds', interaction.locale, '伺服器數量'),
+            name='伺服器數量',
             value=len(self.bot.guilds),
             inline=True
         )
 
         embed.add_field(
-            name=self.bot.get_text('command.info.embed.players', interaction.locale, '播放器數量'),
+            name='播放器數量',
             value=len(self.bot.lavalink.player_manager.players),
             inline=True
         )
@@ -98,13 +98,13 @@ class Commands(Cog):
         )
 
     @commands.slash_command(
-        name=Localized("ping", key="command.ping.name"),
-        description=Localized("查看機器人延遲", key="command.ping.description")
+        name="ping",
+        description="查看機器人延遲"
     )
     async def ping(self, interaction: ApplicationCommandInteraction):
         await interaction.response.send_message(
             embed=InfoEmbed(
-                self.bot.get_text("command.ping.title", interaction.locale, "機器人延遲"),
+                title="機器人延遲",
                 description=f"{round(self.bot.latency * 1000)}ms"
             )
         )

@@ -205,7 +205,7 @@ class LavaPlayer(DefaultPlayer):
 
         if self.is_playing:
             embed.set_author(
-                name=self.bot.get_text("display.status.playing", self.locale, "播放中"),
+                name='播放中',
                 icon_url="https://cdn.discordapp.com/emojis/987643956403781692.webp"
             )
 
@@ -213,7 +213,7 @@ class LavaPlayer(DefaultPlayer):
 
         elif self.paused:
             embed.set_author(
-                name=self.bot.get_text("display.status.paused", self.locale, "已暫停"),
+                name='已暫停',
                 icon_url="https://cdn.discordapp.com/emojis/987661771609358366.webp"
             )
 
@@ -221,7 +221,7 @@ class LavaPlayer(DefaultPlayer):
 
         elif not self.is_connected:
             embed.set_author(
-                name=self.bot.get_text("display.status.disconnected", self.locale, "已斷線"),
+                name='已斷線',
                 icon_url="https://cdn.discordapp.com/emojis/987646268094439488.webp"
             )
 
@@ -229,16 +229,16 @@ class LavaPlayer(DefaultPlayer):
 
         elif not self.current:
             embed.set_author(
-                name=self.bot.get_text("display.status.ended", self.locale, "已結束"),
+                name='已結束',
                 icon_url="https://cdn.discordapp.com/emojis/987645074450034718.webp"
             )
 
             embed.colour = Colour.red()
 
         loop_mode_text = {
-            0: self.bot.get_text('repeat_mode.off', self.locale, '關閉'),
-            1: self.bot.get_text('repeat_mode.song', self.locale, '單曲'),
-            2: self.bot.get_text('repeat_mode.queue', self.locale, '整個序列')
+            0: '關閉',
+            1: '單曲',
+            2: '整個序列'
         }
 
         if self.current:
@@ -248,19 +248,17 @@ class LavaPlayer(DefaultPlayer):
                                 f"`{self.__format_time(self.current.duration)}`"
 
             embed.add_field(
-                name=self.bot.get_text("display.author", self.locale, "👤 作者"), value=self.current.author, inline=True
+                name='👤 作者', value=self.current.author, inline=True
             )
 
             embed.add_field(
-                name=self.bot.get_text("display.requester", self.locale, "👥 點播者"),
-                value=self.bot.get_text(
-                    "display.requester.autoplay", self.locale, "自動播放"
-                ) if not self.current.requester else f"<@{self.current.requester}>",
+                name='👥 點播者',
+                value="自動播放" if not self.current.requester else f"<@{self.current.requester}>",
                 inline=True
             )  # Requester will be 0 if the song is added by autoplay
 
             embed.add_field(
-                name=self.bot.get_text("display.repeat_mode", self.locale, "🔁 重複播放模式"),
+                name='🔁 重複播放模式',
                 value=loop_mode_text[self.loop],
                 inline=True
             )
@@ -269,25 +267,25 @@ class LavaPlayer(DefaultPlayer):
             queue_display = '\n'.join(queue_titles)
 
             if len(self.queue) > 5:
-                queue_display += f"\n{self.bot.get_text('display.queue.more', self.locale, '還有更多...')}"
+                queue_display += f"\n{'還有更多...'}"
 
             embed.add_field(
-                name=self.bot.get_text("display.queue", self.locale, "📃 播放序列"),
-                value=queue_display or self.bot.get_text("empty", self.locale, "空"),
+                name='📃 播放序列',
+                value=queue_display or '空',
                 inline=True
             )
 
             embed.add_field(
-                name=self.bot.get_text("display.filters", self.locale, "⚙️ 已啟用效果器"),
+                name='⚙️ 已啟用效果器',
                 value=', '.join([key.capitalize() for key in self.filters]) or
-                      self.bot.get_text("none", self.locale, "無"),
+                      '無',
                 inline=True
             )
 
             embed.add_field(
-                name=self.bot.get_text("display.shuffle", self.locale, "🔀 隨機播放"),
-                value=self.bot.get_text("display.enable", self.locale, "開啟")
-                if self.shuffle else self.bot.get_text("display.disable", self.locale, "關閉"),
+                name='🔀 隨機播放',
+                value='開啟'
+                if self.shuffle else '關閉',
                 inline=True
             )
 
@@ -304,7 +302,7 @@ class LavaPlayer(DefaultPlayer):
                     embed.set_thumbnail(self.current.artwork_url)
 
         else:
-            embed.title = self.bot.get_text("error.nothing_playing", self.locale, "沒有正在播放的音樂")
+            embed.title = '沒有正在播放的音樂'
 
         return embed
 

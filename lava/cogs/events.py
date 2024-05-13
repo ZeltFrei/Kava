@@ -135,9 +135,6 @@ class Events(Cog):
             case "control.forward":
                 await player.seek(round(player.position) + 10000)
 
-            case "control.autoplay":
-                await player.toggle_autoplay()
-
         await player.update_display(interaction=interaction)
 
 

@@ -8,7 +8,7 @@ from disnake.ui import ActionRow, Button
 from lavalink import DefaultPlayer, Node, parse_time
 
 from lava.embeds import WarningEmbed
-from lava.utils import get_recommended_tracks, get_image_size
+from lava.utils import get_image_size
 
 if TYPE_CHECKING:
     from lava.bot import Bot
@@ -41,37 +41,6 @@ class LavaPlayer(DefaultPlayer):
             self._guild = self.bot.get_guild(self.guild_id)
 
         return self._guild
-
-    async def check_autoplay(self) -> bool:
-        """
-        Check the autoplay status and add recommended tracks if enabled.
-
-        :return: True if tracks were added, False otherwise.
-        """
-        if not self.autoplay or len(self.queue) >= 5:
-            return False
-        self.bot.logger.info(
-            "Queue is empty, adding recommended track for guild %s...", self.guild
-        )
-
-        recommendations = await get_recommended_tracks(self, self.current, 5 - len(self.queue))
-
-        for recommendation in recommendations:
-            self.add(requester=0, track=recommendation)
-
-    async def toggle_autoplay(self):
-        """
-        Toggle autoplay for the player.
-        """
-        if not self.autoplay:
-            self.autoplay = True
-            return
-
-        self.autoplay = False
-
-        for item in self.queue:  # Remove songs added by autoplay
-            if item.requester == 0:
-                self.queue.remove(item)
 
     async def update_display(self,
                              new_message: Optional[Message] = None,
@@ -156,9 +125,9 @@ class LavaPlayer(DefaultPlayer):
                 ),
                 ActionRow(
                     Button(
-                        style=ButtonStyle.green if self.autoplay else ButtonStyle.grey,
-                        emoji=self.bot.get_icon('control.autoplay', "🔥"),
-                        custom_id="control.autoplay"
+                        style=ButtonStyle.grey,
+                        emoji=self.bot.get_icon('empty', "⬛"),
+                        custom_id="control.empty"
                     ),
                     Button(
                         style=ButtonStyle.blurple,
@@ -255,7 +224,7 @@ class LavaPlayer(DefaultPlayer):
                 name='👥 點播者',
                 value="自動播放" if not self.current.requester else f"<@{self.current.requester}>",
                 inline=True
-            )  # Requester will be 0 if the song is added by autoplay
+            )
 
             embed.add_field(
                 name='🔁 重複播放模式',
@@ -415,7 +384,6 @@ class LavaPlayer(DefaultPlayer):
         self._last_position = state.get('position', 0)
         self.position_timestamp = state.get('time', 0)
 
-        _ = self.bot.loop.create_task(self.check_autoplay())
         _ = self.bot.loop.create_task(self.update_display())
 
         if self.is_playing and not self.paused:

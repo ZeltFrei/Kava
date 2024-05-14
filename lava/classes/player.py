@@ -106,21 +106,21 @@ class LavaPlayer(DefaultPlayer):
                         label="重新開始"
                     ),
                     Button(
+                        style=ButtonStyle.blurple,
+                        emoji=self.bot.get_icon('control.next', "⏭️"),
+                        custom_id="control.next",
+                        label="跳過"
+                    ),
+                    Button(
                         style=ButtonStyle.green,
                         emoji=self.bot.get_icon('control.pause', "⏸️"),
                         custom_id="control.pause",
-                        label="暫　　停"
+                        label="暫停"
                     ) if not self.paused else Button(
                         style=ButtonStyle.red,
                         emoji=self.bot.get_icon('control.resume', "▶️"),
                         custom_id="control.resume",
-                        label="繼　　續"
-                    ),
-                    Button(
-                        style=ButtonStyle.blurple,
-                        emoji=self.bot.get_icon('control.next', "⏭️"),
-                        custom_id="control.next",
-                        label="跳至下首"
+                        label="繼續"
                     ),
                     Button(
                         style=[ButtonStyle.grey, ButtonStyle.green, ButtonStyle.blurple][self.loop],
@@ -131,22 +131,10 @@ class LavaPlayer(DefaultPlayer):
                 ),
                 ActionRow(
                     Button(
-                        style=ButtonStyle.grey,
-                        emoji=self.bot.get_icon('empty', "⬛"),
-                        custom_id="control.empty.0",
-                        label="　　　　"
-                    ),
-                    Button(
                         style=ButtonStyle.blurple,
                         emoji=self.bot.get_icon('control.rewind', "⏪"),
                         custom_id="control.rewind",
                         label="倒帶十秒"
-                    ),
-                    Button(
-                        style=ButtonStyle.red,
-                        emoji=self.bot.get_icon('control.stop', "⏹️"),
-                        custom_id="control.stop",
-                        label="停　　止"
                     ),
                     Button(
                         style=ButtonStyle.blurple,
@@ -155,10 +143,10 @@ class LavaPlayer(DefaultPlayer):
                         label="快進十秒"
                     ),
                     Button(
-                        style=ButtonStyle.grey,
-                        emoji=self.bot.get_icon('empty', "⬛"),
-                        custom_id="control.empty.1",
-                        label="　　　　"
+                        style=ButtonStyle.red,
+                        emoji=self.bot.get_icon('control.stop', "⏹️"),
+                        custom_id="control.stop",
+                        label="停止"
                     )
                 )
             ]

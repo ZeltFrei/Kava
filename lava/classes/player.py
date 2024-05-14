@@ -133,7 +133,7 @@ class LavaPlayer(DefaultPlayer):
                     Button(
                         style=ButtonStyle.grey,
                         emoji=self.bot.get_icon('empty', "⬛"),
-                        custom_id="control.empty",
+                        custom_id="control.empty.0",
                         label="　　　　"
                     ),
                     Button(
@@ -157,7 +157,7 @@ class LavaPlayer(DefaultPlayer):
                     Button(
                         style=ButtonStyle.grey,
                         emoji=self.bot.get_icon('empty', "⬛"),
-                        custom_id="control.empty",
+                        custom_id="control.empty.1",
                         label="　　　　"
                     )
                 )

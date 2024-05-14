@@ -94,10 +94,15 @@ class LavaPlayer(DefaultPlayer):
             components = [
                 ActionRow(
                     Button(
-                        style=ButtonStyle.green if self.shuffle else ButtonStyle.grey,
-                        emoji=self.bot.get_icon('control.shuffle', "🔀"),
-                        custom_id="control.shuffle",
-                        label="隨機播放"
+                        style=ButtonStyle.green,
+                        emoji=self.bot.get_icon('control.pause', "⏸️"),
+                        custom_id="control.pause",
+                        label="暫停"
+                    ) if not self.paused else Button(
+                        style=ButtonStyle.red,
+                        emoji=self.bot.get_icon('control.resume', "▶️"),
+                        custom_id="control.resume",
+                        label="繼續"
                     ),
                     Button(
                         style=ButtonStyle.blurple,
@@ -110,26 +115,15 @@ class LavaPlayer(DefaultPlayer):
                         emoji=self.bot.get_icon('control.next', "⏭️"),
                         custom_id="control.next",
                         label="跳過"
-                    ),
-                    Button(
-                        style=ButtonStyle.green,
-                        emoji=self.bot.get_icon('control.pause', "⏸️"),
-                        custom_id="control.pause",
-                        label="暫停"
-                    ) if not self.paused else Button(
-                        style=ButtonStyle.red,
-                        emoji=self.bot.get_icon('control.resume', "▶️"),
-                        custom_id="control.resume",
-                        label="繼續"
-                    ),
-                    Button(
-                        style=[ButtonStyle.grey, ButtonStyle.green, ButtonStyle.blurple][self.loop],
-                        emoji=self.bot.get_icon('control.repeat', "🔁"),
-                        custom_id="control.repeat",
-                        label="重複播放"
                     )
                 ),
                 ActionRow(
+                    Button(
+                        style=ButtonStyle.red,
+                        emoji=self.bot.get_icon('control.stop', "⏹️"),
+                        custom_id="control.stop",
+                        label="停止"
+                    ),
                     Button(
                         style=ButtonStyle.blurple,
                         emoji=self.bot.get_icon('control.rewind', "⏪"),
@@ -141,12 +135,20 @@ class LavaPlayer(DefaultPlayer):
                         emoji=self.bot.get_icon('control.forward', "⏩"),
                         custom_id="control.forward",
                         label="快進十秒"
+                    )
+                ),
+                ActionRow(
+                    Button(
+                        style=ButtonStyle.green if self.shuffle else ButtonStyle.grey,
+                        emoji=self.bot.get_icon('control.shuffle', "🔀"),
+                        custom_id="control.shuffle",
+                        label="隨機播放"
                     ),
                     Button(
-                        style=ButtonStyle.red,
-                        emoji=self.bot.get_icon('control.stop', "⏹️"),
-                        custom_id="control.stop",
-                        label="停止"
+                        style=[ButtonStyle.grey, ButtonStyle.green, ButtonStyle.blurple][self.loop],
+                        emoji=self.bot.get_icon('control.repeat', "🔁"),
+                        custom_id="control.repeat",
+                        label="重複播放"
                     )
                 )
             ]

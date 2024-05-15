@@ -43,12 +43,7 @@ class Events(Cog):
 
         self.bot.logger.info("Received queue end event for guild %s", player.guild)
 
-        player.enter_disconnect_timeout()
-
-        try:
-            await player.update_display()
-        except ValueError:
-            pass
+        await player.guild.voice_client.disconnect(force=False)
 
     async def on_track_load_failed(self, event: TrackLoadFailedEvent):
         player: LavaPlayer = event.player

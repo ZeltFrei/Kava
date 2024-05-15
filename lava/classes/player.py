@@ -1,5 +1,4 @@
 import asyncio
-from asyncio import Task
 from time import time
 from typing import TYPE_CHECKING, Optional, Union
 
@@ -7,7 +6,6 @@ from disnake import Message, Locale, ButtonStyle, Embed, Colour, Guild, Interact
 from disnake.ui import ActionRow, Button
 from lavalink import DefaultPlayer, Node, parse_time
 
-from lava.embeds import WarningEmbed
 from lava.utils import get_image_size
 
 if TYPE_CHECKING:
@@ -32,8 +30,6 @@ class LavaPlayer(DefaultPlayer):
 
         self.__display_image_as_wide: Optional[bool] = None
         self.__last_image_url: str = ""
-
-        self.timeout_task: Optional[Task] = None
 
     @property
     def guild(self) -> Optional[Guild]:
@@ -313,44 +309,6 @@ class LavaPlayer(DefaultPlayer):
                f"{self.bot.get_icon('progress.end_fill', 'EF|') * round((1 - percentage) * 10)}" \
                f"{self.bot.get_icon('progress.end', 'ED|') if percentage != 1 else self.bot.get_icon('progress.end_point', 'EP')}"
 
-    def enter_disconnect_timeout(self):
-        """
-        Disconnect the player if it has been inactive for 5 minutes.
-        """
-        if self.timeout_task and not self.timeout_task.done():
-            return
-
-        self.timeout_task = self.bot.loop.create_task(self.__disconnect_timeout())
-
-    def stop_disconnect_timeout(self):
-        """
-        Stop the disconnect timeout if it is running.
-        """
-        if self.timeout_task:
-            self.timeout_task.cancel()
-
-    async def __disconnect_timeout(self):
-        await asyncio.sleep(180)
-
-        if self.message:
-            await self.message.channel.send(
-                embed=WarningEmbed(
-                    title=f"音樂機器人 {self.bot.user.name} 已經等候您超過三分鐘了，如果接下來 30 秒內沒有進行任何音樂操作，將自動退出。"
-                )
-            )
-        else:
-            await self.bot.get_channel(self.channel_id).send(
-                embed=WarningEmbed(
-                    title=f"音樂機器人 {self.bot.user.name} 已經等候您超過三分鐘了，如果接下來 30 秒內沒有進行任何音樂操作，將自動退出。"
-                )
-            )
-
-        await asyncio.sleep(30)
-
-        await self.guild.voice_client.disconnect(force=False)
-
-        return
-
     async def is_current_artwork_wide(self) -> bool:
         """
         Check if the current playing track's artwork is wide.
@@ -386,8 +344,3 @@ class LavaPlayer(DefaultPlayer):
         self.position_timestamp = state.get('time', 0)
 
         _ = self.bot.loop.create_task(self.update_display())
-
-        if self.is_playing and not self.paused:
-            self.stop_disconnect_timeout()
-        else:
-            self.enter_disconnect_timeout()

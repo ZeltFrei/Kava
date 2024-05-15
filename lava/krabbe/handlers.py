@@ -43,7 +43,6 @@ async def connect(client: "KavaClient", request: "Request", owner_id: int, chann
     )
 
     player = client.bot.lavalink.player_manager.get(channel.guild.id)
-    player.enter_disconnect_timeout()
 
     await request.respond(
         {
@@ -305,7 +304,6 @@ async def pause(client: "KavaClient", request: "Request", channel_id: int):
         return
 
     await player.set_pause(True)
-    player.enter_disconnect_timeout()
 
     await request.respond(
         {

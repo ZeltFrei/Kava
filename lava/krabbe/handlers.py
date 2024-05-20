@@ -14,7 +14,10 @@ if TYPE_CHECKING:
 
 async def get_client_info(client: "KavaClient", request: "Request"):
     await request.respond(
-        {"bot_user_id": client.bot.user.id}
+        {
+            "bot_user_id": client.bot.user.id,
+            "bot_user_name": client.bot.user.name
+        }
     )
 
 

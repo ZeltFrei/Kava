@@ -242,23 +242,10 @@ class LavaPlayer(DefaultPlayer):
             )
 
             embed.add_field(
-                name='⚙️ 已啟用效果器',
-                value=', '.join([key.capitalize() for key in self.filters]) or
-                      '無',
-                inline=True
-            )
-
-            embed.add_field(
                 name='🔀 隨機播放',
                 value='開啟'
                 if self.shuffle else '關閉',
                 inline=True
-            )
-
-            embed.set_footer(
-                text=self.bot.get_text(
-                    "display.footer", self.locale, "如果你覺得音樂怪怪的，可以試著檢查看看效果器設定或是切換語音頻道地區"
-                )
             )
 
             if self.current.artwork_url:

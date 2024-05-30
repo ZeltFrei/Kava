@@ -39,7 +39,7 @@ class Commands(Cog):
 
     @commands.slash_command(
         name="info",
-        description="顯示機器人資訊"
+        description="顯示機器人資訊，此指令隸屬於 Krabbe 2 系統"
     )
     async def info(self, interaction: ApplicationCommandInteraction):
         embed = Embed(

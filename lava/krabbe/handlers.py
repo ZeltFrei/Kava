@@ -82,7 +82,7 @@ async def nowplaying(client: "KavaClient", request: "Request", channel_id: int):
 
 
 async def play(client: "KavaClient", request: "Request", channel_id: int, author_id: int, query: str,
-               index: Optional[int]):
+               index: Optional[int], volume: int = 100):
     if not (channel := await ensure_channel(request, channel_id)):
         return
 
@@ -138,7 +138,9 @@ async def play(client: "KavaClient", request: "Request", channel_id: int, author
                     "status": "success",
                     "message": f"成功加入播放序列：{len(results.tracks)} / {results.playlist_info.name}"
                 }
-            ),
+            )
+
+    await player.set_volume(volume)
 
     # If the player isn't already playing, start it.
     if not player.is_playing:

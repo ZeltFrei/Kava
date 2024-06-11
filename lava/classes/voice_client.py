@@ -50,6 +50,15 @@ class LavalinkVoiceClient(VoiceClient):
         if it doesn't exist yet.
         """
         self.lavalink.player_manager.new(guild_id=self.channel.guild.id)
+
+        permissions = self.channel.permissions_for(
+            self.channel.guild.get_member(self.bot.user.id)
+        )
+
+        if not permissions.connect or not permissions.speak:  # Check user limit too?
+            await self.disconnect(force=True)
+            raise ValueError('Connect and Speak permissions is required in order to play music')
+
         await self.channel.guild.change_voice_state(channel=self.channel, self_mute=self_mute, self_deaf=self_deaf)
 
     async def disconnect(self, *, force: bool = False) -> None:

@@ -34,8 +34,16 @@ async def connect(client: "KavaClient", request: "Request", owner_id: int, chann
         )
         return
 
-    # noinspection PyTypeChecker
-    await channel.connect(timeout=60.0, reconnect=True, cls=LavalinkVoiceClient)
+    try:
+        await channel.connect(timeout=5.0, reconnect=True, cls=LavalinkVoiceClient)
+    except ValueError:
+        await request.respond(
+            {
+                "status": "error",
+                "message": "無法連接到語音頻道。"
+            }
+        )
+        return
 
     await channel.send(
         content=f"<@{owner_id}>",

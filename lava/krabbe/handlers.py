@@ -133,8 +133,7 @@ async def play(client: "KavaClient", request: "Request", channel_id: int, author
                     index=index + iter_index
                 )
 
-            # noinspection PyTypeChecker
-            request.respond(
+            await request.respond(
                 {
                     "status": "success",
                     "message": f"成功加入播放序列：{len(results.tracks)} / {results.playlist_info.name}"

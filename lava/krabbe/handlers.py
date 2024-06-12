@@ -157,6 +157,31 @@ async def play(client: "KavaClient", request: "Request", channel_id: int, author
     await player.update_display(new_message=await channel.send(content="Loading..."))
 
 
+async def volume(client: "KavaClient", request: "Request", channel_id: int, vol: int):
+    if not (channel := await ensure_channel(request, channel_id)):
+        return
+
+    player: LavaPlayer = client.bot.lavalink.player_manager.get(channel.guild.id)
+
+    if not player:
+        await request.respond(
+            {
+                "status": "error",
+                "message": "機器人尚未連接到語音頻道。"
+            }
+        )
+        return
+
+    await player.set_volume(vol)
+
+    await request.respond(
+        {
+            "status": "success",
+            "message": f"成功設定音量為 {vol}%"
+        }
+    )
+
+
 async def search(client: "KavaClient", request: "Request", query: str):
     if re.match(r"http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*(),]|%[0-9a-fA-F][0-9a-fA-F])+", query):
         await request.respond(

@@ -330,4 +330,4 @@ class LavaPlayer(DefaultPlayer):
         self._last_position = state.get('position', 0)
         self.position_timestamp = state.get('time', 0)
 
-        _ = self.bot.loop.create_task(self.update_display())
+        _ = self.bot.loop.create_task(self.check_autoplay())

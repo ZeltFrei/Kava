@@ -90,7 +90,7 @@ async def nowplaying(client: "KavaClient", request: "Request", channel_id: int):
 
 
 async def play(client: "KavaClient", request: "Request", channel_id: int, author_id: int, query: str,
-               index: Optional[int], volume: int = 100):
+               index: Optional[int], volume: int = 75, shuffle: bool = False):
     if not (channel := await ensure_channel(request, channel_id)):
         return
 
@@ -149,6 +149,8 @@ async def play(client: "KavaClient", request: "Request", channel_id: int, author
             )
 
     await player.set_volume(volume)
+
+    player.set_shuffle(shuffle)
 
     # If the player isn't already playing, start it.
     if not player.is_playing:

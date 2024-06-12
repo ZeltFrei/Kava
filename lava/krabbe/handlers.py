@@ -433,6 +433,7 @@ def add_handlers(client: "KavaClient"):
     client.add_handler("connect", connect)
     client.add_handler("nowplaying", nowplaying)
     client.add_handler("play", play)
+    client.add_handler("volume", volume)
     client.add_handler("search", search)
     client.add_handler("skip", skip)
     client.add_handler("remove", remove)

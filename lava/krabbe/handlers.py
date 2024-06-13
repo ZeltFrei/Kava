@@ -128,7 +128,7 @@ async def play(client: "KavaClient", request: "Request", channel_id: int, author
             await request.respond(
                 {
                     "status": "success",
-                    "message": f"成功加入播放序列：{results.tracks[0].title}"
+                    "message": f"成功加入待播清單：{results.tracks[0].title}"
                 }
             )
 
@@ -144,7 +144,7 @@ async def play(client: "KavaClient", request: "Request", channel_id: int, author
             await request.respond(
                 {
                     "status": "success",
-                    "message": f"成功加入播放序列：{len(results.tracks)} / {results.playlist_info.name}"
+                    "message": f"成功加入待播清單：{len(results.tracks)} / {results.playlist_info.name}"
                 }
             )
 
@@ -320,7 +320,7 @@ async def clean(client: "KavaClient", request: "Request", channel_id: int):
     await request.respond(
         {
             "status": "success",
-            "message": "成功清空播放序列"
+            "message": "成功清空待播清單"
         }
     )
 
@@ -406,7 +406,7 @@ async def stop(client: "KavaClient", request: "Request", channel_id: int):
     await request.respond(
         {
             "status": "success",
-            "message": "成功停止播放並清空播放序列"
+            "message": "成功停止播放並清空待播清單"
         }
     )
 

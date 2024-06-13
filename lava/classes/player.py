@@ -236,7 +236,7 @@ class LavaPlayer(DefaultPlayer):
                 queue_display += f"\n{'還有更多...'}"
 
             embed.add_field(
-                name='📃 播放序列',
+                name='📃 待播清單',
                 value=queue_display or '空',
                 inline=True
             )

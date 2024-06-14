@@ -399,7 +399,7 @@ async def stop(client: "KavaClient", request: "Request", channel_id: int):
     await player.stop()
     player.queue.clear()
 
-    await channel.guild.voice_client.disconnect(force=False)
+    await channel.guild.voice_client.disconnect(force=True)
 
     await player.update_display(new_message=await channel.send("Loading..."))
 

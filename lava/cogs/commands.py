@@ -1,6 +1,6 @@
 from os import getpid
 
-from disnake import ApplicationCommandInteraction, Localized, Embed
+from disnake import ApplicationCommandInteraction, Embed
 from disnake.ext import commands
 from disnake.ext.commands import Cog
 from lavalink import Timescale, Tremolo, Vibrato, LowPass, Rotation, Equalizer
@@ -12,7 +12,7 @@ from lava.utils import bytes_to_gb, get_commit_hash, get_upstream_url, \
     get_current_branch
 from os import getpid
 
-from disnake import ApplicationCommandInteraction, Localized, Embed
+from disnake import ApplicationCommandInteraction, Embed
 from disnake.ext import commands
 from disnake.ext.commands import Cog
 from lavalink import Timescale, Tremolo, Vibrato, LowPass, Rotation, Equalizer

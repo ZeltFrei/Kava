@@ -26,13 +26,7 @@ async def connect(client: "KavaClient", request: "Request", owner_id: int, chann
         return
 
     if channel.guild.voice_client:
-        await request.respond(
-            {
-                "status": "error",
-                "message": "機器人已經連接到語音頻道。"
-            }
-        )
-        return
+        await channel.guild.voice_client.disconnect(force=True)
 
     try:
         await channel.connect(timeout=5.0, reconnect=True, cls=LavalinkVoiceClient)

@@ -83,6 +83,30 @@ async def nowplaying(client: "KavaClient", request: "Request", channel_id: int):
     )
 
 
+async def song_info_embed(client: "KavaClient", request: "Request", channel_id: int):
+    if not (channel := await ensure_channel(request, channel_id)):
+        return
+
+    if not channel.guild.voice_client:
+        await request.respond(
+            {
+                "status": "error",
+                "message": "機器人尚未連接到語音頻道。"
+            }
+        )
+        return
+
+    player: LavaPlayer = client.bot.lavalink.player_manager.get(channel.guild.id)
+
+    await request.respond(
+        {
+            "status": "success",
+            "message": "以下是目前正在播放的歌曲資訊。",
+            "embed": (await player.generate_display_embed()).to_dict()
+        }
+    )
+
+
 async def play(client: "KavaClient", request: "Request", channel_id: int, author_id: int, query: str,
                index: Optional[int], volume: int = 75, shuffle: bool = False):
     if not (channel := await ensure_channel(request, channel_id)):
@@ -426,6 +450,7 @@ def add_handlers(client: "KavaClient"):
     client.add_handler("get_client_info", get_client_info)
     client.add_handler("connect", connect)
     client.add_handler("nowplaying", nowplaying)
+    client.add_handler("song_info_embed", song_info_embed)
     client.add_handler("play", play)
     client.add_handler("volume", volume)
     client.add_handler("search", search)

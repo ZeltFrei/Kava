@@ -209,6 +209,7 @@ class LavaPlayer(DefaultPlayer):
 
         if self.current:
             embed.title = self.current.title
+            embed.url = self.current.uri
             embed.description = f"`{self.__format_time(self.position)}`" \
                                 f" {self.__generate_progress_bar(self.current.duration, self.position)} " \
                                 f"`{self.__format_time(self.current.duration)}`"
